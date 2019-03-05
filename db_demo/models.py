@@ -12,42 +12,7 @@ class Profile(models.Model):
         on_delete=models.CASCADE
     )
 
-class Role(models.Model):
-    title = models.CharField(max_length=45)
-    description = models.CharField(max_length=200)
-    users = models.ManyToManyField(User)
-    contributor = models.ForeignKey(
-        Contributor,
-        on_delete=models.CASCADE
-    )
-
-class Contributor(models.Model):
-    pages = models.ManyToManyField(Page)
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE
-    )
-
-class Permission(models.Model):
-    title = models.CharField(max_length=45)
-    description = models.CharField(max_length=200)
-    roles = models.ManyToManyField(Role)
-
-class Page(models.Model):
-    title = models.CharField(max_length=124)
-    body = models.TextField
-    is_published = models.BooleanField
-    is_flagged = models.BooleanField
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE
-    )
-    category = models.ForeignKey(
-        Category,
-        on_delete=models.CASCADE
-    )
-
-class Category(models.Model):
+class Categories(models.Model):
     title = models.CharField(max_length=30)
     user = models.ForeignKey(
         User,
@@ -58,18 +23,46 @@ class Category(models.Model):
         on_delete=models.CASCADE
     )
 
-class Tag(models.Model):
-    title = models.CharField(max_length=30)
-    body = models.CharField(max_length=50)
-    pages = models.ManyToManyField(Page)
+class Pages(models.Model):
+    title = models.CharField(max_length=124)
+    body = models.TextField
+    is_published = models.BooleanField
+    is_flagged = models.BooleanField
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE
+    )
+    category = models.ForeignKey(
+        Categories,
+        on_delete=models.CASCADE
+    )
+
+
+class Contributors(models.Model):
+    pages = models.ManyToManyField(Pages)
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE
     )
 
-class Flag(models.Model):
+class Roles(models.Model):
+    title = models.CharField(max_length=45)
+    description = models.CharField(max_length=200)
+    users = models.ManyToManyField(User)
+    contributor = models.ForeignKey(
+        Contributors,
+        on_delete=models.CASCADE
+    )
+
+class Permissions(models.Model):
+    title = models.CharField(max_length=45)
+    description = models.CharField(max_length=200)
+    roles = models.ManyToManyField(Roles)
+
+class Tags(models.Model):
     title = models.CharField(max_length=30)
     body = models.CharField(max_length=50)
+    pages = models.ManyToManyField(Pages)
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE
