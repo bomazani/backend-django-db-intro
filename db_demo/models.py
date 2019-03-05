@@ -4,47 +4,73 @@ from django.db import models
 # username, password, email address, and so on.
 from django.contrib.auth.models import User
 
-class Users(models.Model):
-    id = INT
-    username = models.VARCHAR(45)
-    password = models.VARCHAR(45)
-    email = VARCHAR(45)
+class Profile(models.Model):
+    avatar = models.CharField(max_length=45)
+    body = models.TextField
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE
+    )
 
-class Profiles(models.Model):
-    id = Int
-    user_id = INT
-    avatar = VARCHAR(45)
-    body = TEXT
+class Role(models.Model):
+    title = models.CharField(max_length=45)
+    description = models.CharField(max_length=200)
+    users = models.ManyToManyField(User)
+    contributor = models.ForeignKey(
+        Contributor,
+        on_delete=models.CASCADE
+    )
 
-class Roles(models.Model):
-    id = INT
-    title = VARCHAR(45)
+class Contributor(models.Model):
+    pages = models.ManyToManyField(Page)
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE
+    )
 
-class Contributors(models.Model):
-    page_id = INT
-    user_id = INT
-    role_id = INT
+class Permission(models.Model):
+    title = models.CharField(max_length=45)
+    description = models.CharField(max_length=200)
+    roles = models.ManyToManyField(Role)
 
-class Permissions(models.Model):
-    id = INT
-    title = VARCHAR(45)
+class Page(models.Model):
+    title = models.CharField(max_length=124)
+    body = models.TextField
+    is_published = models.BooleanField
+    is_flagged = models.BooleanField
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE
+    )
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.CASCADE
+    )
 
-class Pages(models.Model):
-    id=INT
-    user_id = INT
-    category_id = INT
-    title = VARCHAR(124)
-    body = LONGTEXT
-    is_published = TINYINT
-    is_flagged = TINYINT
+class Category(models.Model):
+    title = models.CharField(max_length=30)
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE
+    )
+    parentCategory = models.ForeignKey(
+        'self',
+        on_delete=models.CASCADE
+    )
 
-class Categories(models.Model):
-    id = INT
-    user_id = INT
-    parent_id = INT
-    title = VARCHAR(30)
+class Tag(models.Model):
+    title = models.CharField(max_length=30)
+    body = models.CharField(max_length=50)
+    pages = models.ManyToManyField(Page)
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE
+    )
 
-class Tags(models.Model):
-    id = INT
-    user_id = INT
-    body = VARCHAR(50)
+class Flag(models.Model):
+    title = models.CharField(max_length=30)
+    body = models.CharField(max_length=50)
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE
+    )
